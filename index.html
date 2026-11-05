@@ -59,15 +59,9 @@
   @media (max-width: 720px) { .nav-links a:not(.btn) { display: none; } }
 
   /* 첫 화면 */
-  .hero { position: relative; overflow: hidden; padding: 120px 0 72px;
-    background: radial-gradient(1200px 500px at 85% 10%, var(--primary-light), transparent 60%),
-                radial-gradient(800px 400px at 0% 100%, #EEF6FF, transparent 60%), #fff; }
+  .hero { position: relative; overflow: hidden; padding: 120px 0 72px; background: #fff; }
   .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
-  .badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px;
-    background: var(--primary-light); color: var(--primary-dark); font-size: 14px; font-weight: 700; }
-  .badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--success);
-    box-shadow: 0 0 0 4px rgba(34,197,94,.2); }
-  .hero h1 { font-size: clamp(34px, 5.4vw, 62px); line-height: 1.18; letter-spacing: -.03em; margin: 20px 0 18px; font-weight: 800; }
+  .hero h1 { font-size: clamp(34px, 5.4vw, 62px); line-height: 1.18; letter-spacing: -.03em; margin: 0 0 18px; font-weight: 800; }
   .hero h1 em { font-style: normal; color: var(--primary); }
   .hero p.lead { font-size: clamp(16px, 1.6vw, 19px); color: var(--text2); margin: 0 0 32px; max-width: 520px; }
   .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
@@ -174,7 +168,7 @@
   .faq details p { margin: 0 0 20px; color: var(--text2); }
 
   /* 마지막 다운로드 유도 */
-  .final { background: linear-gradient(135deg, #1E88E5, #1565C0); color: #fff; text-align: center; border-radius: 32px; padding: 72px 24px; }
+  .final { background: var(--primary); color: #fff; text-align: center; border-radius: 32px; padding: 72px 24px; }
   .final h2 { color: #fff; }
   .final .sub { color: rgba(255,255,255,.85); margin-bottom: 32px; }
   .final .btn-primary { background: #fff; color: var(--primary-dark); box-shadow: 0 12px 30px rgba(0,0,0,.18); }
@@ -211,7 +205,6 @@
   <div class="hero">
     <div class="wrap">
       <div>
-        <span class="badge">전국 공중화장실 지도 앱</span>
         <h1>급할 때,<br />가장 가까운 화장실을<br /><em>지금 바로</em></h1>
         <p class="lead">내 위치에서 가까운 공중화장실을 지도에서 찾고, 지금 열려 있는지와 장애인 칸·기저귀 교환대 같은 편의시설까지 한눈에 확인하세요.</p>
         <div class="cta-row">
