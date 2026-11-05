@@ -2,10 +2,10 @@
 
 화장실나우 앱의 소개·다운로드 페이지와 개인정보처리방침 · 이용약관입니다. (GitHub Pages로 게시)
 
-- 홈페이지(앱 소개·다운로드): https://cleanpass-toliet.github.io/toiletnow-policy/
-- 개인정보처리방침: https://cleanpass-toliet.github.io/toiletnow-policy/privacy.html
-- 이용약관: https://cleanpass-toliet.github.io/toiletnow-policy/terms.html
-- APK 다운로드: https://github.com/CleanPass-Toliet/toiletnow-policy/releases/latest/download/toiletnow.apk
+- 홈페이지(앱 소개·다운로드): https://cleanpass-toliet.github.io/toiletnow/
+- 개인정보처리방침: https://cleanpass-toliet.github.io/toiletnow/privacy.html
+- 이용약관: https://cleanpass-toliet.github.io/toiletnow/terms.html
+- APK 다운로드: https://github.com/CleanPass-Toliet/toiletnow/releases/latest/download/toiletnow.apk
 
 ## 수정 방법
 
