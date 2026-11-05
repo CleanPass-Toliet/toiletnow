@@ -3,58 +3,435 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>화장실나우</title>
-<meta name="description" content="화장실나우 - 사용자 맞춤형 실시간 공중화장실 정보 제공 서비스" />
+<title>화장실나우 · 내 주변 공중화장실 지도</title>
+<meta name="description" content="급할 때 가장 가까운 공중화장실을 바로. 전국 약 5만 곳의 공중화장실 위치, 운영시간, 편의시설을 지도에서 확인하세요." />
+<meta name="theme-color" content="#1E88E5" />
+<link rel="icon" type="image/png" href="./img/icon.png" />
+<link rel="apple-touch-icon" href="./img/icon.png" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="화장실나우" />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:url" content="https://cleanpass-toliet.github.io/toiletnow-policy/" />
+<link rel="canonical" href="https://cleanpass-toliet.github.io/toiletnow-policy/" />
+<meta property="og:title" content="화장실나우 · 내 주변 공중화장실 지도" />
+<meta property="og:description" content="전국 약 5만 곳의 공중화장실 위치, 운영시간, 편의시설을 지도에서 바로 확인하세요." />
+<meta property="og:image" content="https://cleanpass-toliet.github.io/toiletnow-policy/img/icon.png" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 <style>
-  :root { --primary:#1E88E5; --primary-light:#E3F2FD; --text:#1A1D29; --text2:#4B5563; --text3:#9CA3AF; --border:#E5E7EB; --bg:#F5F7FA; --card:#FFFFFF; }
-  @media (prefers-color-scheme: dark) {
-    :root { --primary:#64B5F6; --primary-light:#0D2A44; --text:#F3F4F6; --text2:#C9CED6; --text3:#8B93A1; --border:#2A2F3A; --bg:#0F1218; --card:#171B23; }
+  :root {
+    --primary: #1E88E5; --primary-dark: #1565C0; --primary-light: #E3F2FD;
+    --accent: #E6FF00; --success: #22C55E; --danger: #EF4444;
+    --text: #1A1D29; --text2: #4B5563; --text3: #9CA3AF;
+    --border: #E5E7EB; --bg: #F5F7FA; --white: #fff;
+    --radius: 20px;
   }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--text);
-    font-family: 'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif;
-    line-height:1.7; -webkit-text-size-adjust:100%; }
-  header { background:var(--card); border-bottom:1px solid var(--border); }
-  .wrap { max-width:760px; margin:0 auto; padding:0 16px; }
-  header .wrap { display:flex; align-items:center; justify-content:space-between; height:60px; }
-  .brand { font-weight:900; font-size:20px; color:var(--primary); text-decoration:none; }
-  nav a { color:var(--text2); text-decoration:none; font-size:14px; margin-left:16px; }
-  nav a:hover, nav a[aria-current="page"] { color:var(--primary); }
-  main .wrap { padding-top:32px; padding-bottom:64px; }
-  h1 { font-size:28px; margin:0 0 4px; }
-  .date { color:var(--text3); font-size:14px; margin:0 0 28px; }
-  section { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px 22px; margin-bottom:14px; }
-  h2 { font-size:17px; margin:0 0 8px; }
-  section p { margin:0; color:var(--text2); white-space:pre-line; font-size:15px; }
-  .hero { padding:56px 0 24px; }
-  .hero h1 { font-size:34px; color:var(--primary); }
-  .hero p { color:var(--text2); font-size:17px; margin:8px 0 0; }
-  .links { display:grid; gap:12px; margin-top:28px; }
-  .links a { display:block; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; color:var(--text); text-decoration:none; font-weight:700; }
-  .links a span { display:block; font-weight:400; color:var(--text3); font-size:14px; }
-  .links a:hover { border-color:var(--primary); }
-  footer { color:var(--text3); font-size:13px; padding:24px 0 40px; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0; color: var(--text); background: var(--white);
+    font-family: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', system-ui, sans-serif;
+    line-height: 1.6; word-break: keep-all; -webkit-text-size-adjust: 100%;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+  /* 상단 메뉴 */
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; background: rgba(255,255,255,.82);
+    backdrop-filter: saturate(180%) blur(12px); -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid rgba(229,231,235,.7); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 19px; color: var(--primary); text-decoration: none; }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a { text-decoration: none; font-size: 15px; color: var(--text2); font-weight: 500; }
+  .nav-links a:hover { color: var(--primary); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+    font-weight: 700; border-radius: 12px; transition: transform .15s, background .15s, box-shadow .15s; cursor: pointer; }
+  .btn-sm { padding: 9px 16px; font-size: 14px; }
+  .btn-lg { padding: 16px 28px; font-size: 17px; }
+  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 8px 24px rgba(30,136,229,.28); }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-ghost { background: #fff; color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+  .nav-links .btn-primary { color: #fff; }
+  @media (max-width: 720px) { .nav-links a:not(.btn) { display: none; } }
+
+  /* 첫 화면 */
+  .hero { position: relative; overflow: hidden; padding: 120px 0 72px;
+    background: radial-gradient(1200px 500px at 85% 10%, var(--primary-light), transparent 60%),
+                radial-gradient(800px 400px at 0% 100%, #EEF6FF, transparent 60%), #fff; }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px;
+    background: var(--primary-light); color: var(--primary-dark); font-size: 14px; font-weight: 700; }
+  .badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--success);
+    box-shadow: 0 0 0 4px rgba(34,197,94,.2); }
+  .hero h1 { font-size: clamp(34px, 5.4vw, 62px); line-height: 1.18; letter-spacing: -.03em; margin: 20px 0 18px; font-weight: 800; }
+  .hero h1 em { font-style: normal; color: var(--primary); }
+  .hero p.lead { font-size: clamp(16px, 1.6vw, 19px); color: var(--text2); margin: 0 0 32px; max-width: 520px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .meta { margin-top: 14px; font-size: 13px; color: var(--text3); }
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; padding: 0; list-style: none; }
+  .pills li { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+    background: rgba(255,255,255,.75); border: 1px solid rgba(30,136,229,.16); font-size: 14px; font-weight: 600;
+    box-shadow: 0 8px 24px rgba(30,136,229,.07); }
+  .pills li::before { content: '✓'; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--primary); color: #fff; font-size: 11px; font-weight: 900; }
+  .phone { position: relative; width: min(300px, 78vw); margin: 0 auto; border-radius: 40px; padding: 10px;
+    background: #111; box-shadow: 0 40px 80px rgba(17,24,39,.22), 0 0 0 1px rgba(0,0,0,.05); }
+  .phone img { border-radius: 31px; width: 100%; aspect-ratio: 1080/2400; object-fit: cover; }
+  .hero .phone { transform: rotate(2deg); }
+  .float-card { position: absolute; left: -64px; bottom: 90px; background: #fff; border-radius: 16px; padding: 12px 16px;
+    box-shadow: 0 16px 40px rgba(17,24,39,.14); display: flex; gap: 10px; align-items: center; font-size: 14px; }
+  .float-card b { display: block; font-size: 15px; }
+  .float-card .dot { color: var(--success); font-weight: 700; }
+  .float-card .ico { width: 36px; height: 36px; border-radius: 10px; background: var(--primary-light); display: grid; place-items: center; font-size: 18px; }
+  @media (max-width: 880px) {
+    .hero { padding-top: 100px; }
+    .hero .wrap { grid-template-columns: 1fr; text-align: center; }
+    .hero p.lead { margin-left: auto; margin-right: auto; }
+    .cta-row, .pills { justify-content: center; }
+    .float-card { left: -12px; bottom: 60px; }
+  }
+
+  /* 공통 섹션 */
+  section { padding: 96px 0; }
+  .alt { background: var(--bg); }
+  .eyebrow { color: var(--primary); font-weight: 800; font-size: 15px; letter-spacing: .02em; }
+  h2 { font-size: clamp(28px, 3.8vw, 44px); line-height: 1.25; letter-spacing: -.025em; margin: 10px 0 14px; font-weight: 800; }
+  .sub { color: var(--text2); font-size: 17px; margin: 0; }
+  .head { text-align: center; max-width: 680px; margin: 0 auto 56px; }
+
+  /* 전과 후 비교 */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 960px; margin: 0 auto; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+  .card .tag { font-size: 13px; font-weight: 700; color: var(--text3); }
+  .card h3 { font-size: 22px; margin: 6px 0 20px; }
+  .card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .card li { display: flex; gap: 12px; align-items: flex-start; color: var(--text2); }
+  .card li::before { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; font-weight: 900; margin-top: 1px; }
+  .card.before li::before { content: '✕'; background: #FEE2E2; color: var(--danger); }
+  .card.after { border-color: rgba(30,136,229,.35); box-shadow: 0 20px 50px rgba(30,136,229,.12); }
+  .card.after .tag { color: var(--primary); }
+  .card.after li { color: var(--text); font-weight: 500; }
+  .card.after li::before { content: '✓'; background: var(--primary); color: #fff; }
+  @media (max-width: 760px) { .compare { grid-template-columns: 1fr; } }
+
+  /* 기능 소개 */
+  .feature { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; max-width: 980px; margin: 0 auto; }
+  .feature + .feature { margin-top: 96px; }
+  .feature.reverse .feature-text { order: 2; }
+  .feature .num { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px;
+    background: var(--primary-light); color: var(--primary); font-weight: 900; }
+  .feature h3 { font-size: clamp(24px, 3vw, 34px); line-height: 1.3; letter-spacing: -.02em; margin: 16px 0 12px; }
+  .feature p { color: var(--text2); font-size: 17px; margin: 0 0 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips span { padding: 6px 12px; border-radius: 999px; background: var(--primary-light); color: var(--primary-dark); font-size: 14px; font-weight: 600; }
+  .feature .phone { width: min(280px, 72vw); }
+  @media (max-width: 820px) {
+    .feature { grid-template-columns: 1fr; gap: 36px; text-align: center; }
+    .feature.reverse .feature-text { order: 0; }
+    .chips { justify-content: center; }
+  }
+
+  /* 숫자 */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 960px; margin: 0 auto; }
+  .stat { text-align: center; background: #fff; border-radius: var(--radius); padding: 36px 20px; border: 1px solid var(--border); }
+  .stat b { display: block; font-size: clamp(34px, 4.4vw, 48px); font-weight: 900; color: var(--primary); letter-spacing: -.03em; line-height: 1.1; }
+  .stat span { display: block; margin-top: 8px; color: var(--text2); font-weight: 600; }
+  .stat small { display: block; color: var(--text3); margin-top: 4px; }
+  @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
+
+  /* 사용 방법 */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  .steps li { position: relative; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 22px; counter-increment: step; }
+  .steps li::before { content: counter(step, decimal-leading-zero); font-weight: 900; font-size: 15px; color: var(--primary); }
+  .steps h3 { font-size: 18px; margin: 10px 0 6px; }
+  .steps p { margin: 0; color: var(--text2); font-size: 15px; }
+  @media (max-width: 900px) { .steps { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+
+  /* 설치 방법 */
+  .install { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; max-width: 980px; margin: 0 auto; }
+  .install ol { margin: 0; padding-left: 22px; display: grid; gap: 12px; color: var(--text2); }
+  .install ol b { color: var(--text); }
+  .qr { text-align: center; }
+  .qr img { width: 180px; height: 180px; margin: 8px auto 12px; }
+  .qr p { margin: 0; color: var(--text2); font-size: 15px; }
+  .note { margin-top: 18px; padding: 14px 16px; border-radius: 12px; background: #FFFBEB; color: #92400E; font-size: 14px; }
+  @media (max-width: 820px) { .install { grid-template-columns: 1fr; } }
+
+  /* 자주 묻는 질문 */
+  .faq { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+  .faq details { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 0 22px; }
+  .faq details[open] { border-color: rgba(30,136,229,.4); }
+  .faq summary { list-style: none; cursor: pointer; padding: 20px 0; font-weight: 700; font-size: 17px; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; color: var(--primary); font-size: 22px; line-height: 1; transition: transform .2s; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { margin: 0 0 20px; color: var(--text2); }
+
+  /* 마지막 다운로드 유도 */
+  .final { background: linear-gradient(135deg, #1E88E5, #1565C0); color: #fff; text-align: center; border-radius: 32px; padding: 72px 24px; }
+  .final h2 { color: #fff; }
+  .final .sub { color: rgba(255,255,255,.85); margin-bottom: 32px; }
+  .final .btn-primary { background: #fff; color: var(--primary-dark); box-shadow: 0 12px 30px rgba(0,0,0,.18); }
+  .final .btn-primary:hover { background: var(--accent); color: var(--text); }
+
+  footer { padding: 48px 0 56px; color: var(--text3); font-size: 14px; border-top: 1px solid var(--border); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; }
+  footer nav { display: flex; gap: 18px; }
+  footer nav a { text-decoration: none; color: var(--text2); font-weight: 600; }
+  footer nav a:hover { color: var(--primary); }
+  footer p { margin: 4px 0; }
+
+  /* 스크롤하면 부드럽게 나타나기 */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.on { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
-<header><div class="wrap">
-  <a class="brand" href="./index.html">화장실나우</a>
-  <nav>
-    <a href="./terms.html">이용약관</a>
-    <a href="./privacy.html">개인정보처리방침</a>
-  </nav>
-</div></header>
-<main><div class="wrap">
-<div class="hero">
-  <h1>화장실나우</h1>
-  <p>사용자 맞춤형 실시간 공중화장실 정보 제공 서비스</p>
-  <p>내 주변 공중화장실의 위치, 운영시간, 편의시설과 이용자 후기를 한눈에 확인하세요.</p>
-</div>
-<div class="links">
-  <a href="./privacy.html">개인정보처리방침<span>어떤 정보를 수집하고 어떻게 보호하는지 안내합니다</span></a>
-  <a href="./terms.html">이용약관<span>서비스 이용 조건을 안내합니다</span></a>
-</div>
-</div></main>
-<footer><div class="wrap">© 화장실나우 · 문의: 김가현 / 2024000002@g.baewha.ac.kr</div></footer>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="./img/icon.png" alt="" />화장실나우</a>
+    <nav class="nav-links">
+      <a href="#features">기능</a>
+      <a href="#how">사용 방법</a>
+      <a href="#faq">자주 묻는 질문</a>
+      <a class="btn btn-primary btn-sm" href="#install">앱 받기</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <span class="badge">전국 공중화장실 지도 앱</span>
+        <h1>급할 때,<br />가장 가까운 화장실을<br /><em>지금 바로</em></h1>
+        <p class="lead">내 위치에서 가까운 공중화장실을 지도에서 찾고, 지금 열려 있는지와 장애인 칸·기저귀 교환대 같은 편의시설까지 한눈에 확인하세요.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-lg js-download" href="#install">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.38.38 0 00-.66-.38l-1.86 3.22a11.5 11.5 0 00-9.84 0L5.22 5.92a.38.38 0 00-.66.38L6.4 9.48A10.8 10.8 0 001 18h22a10.8 10.8 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg>
+            Android 앱 다운로드
+          </a>
+          <a class="btn btn-ghost btn-lg" href="#features">기능 둘러보기</a>
+        </div>
+        <p class="meta">무료 · Android 7.0 이상 · 약 75MB</p>
+        <ul class="pills">
+          <li>전국 약 5만 곳</li>
+          <li>운영 중인지 바로 표시</li>
+          <li>로그인 없이 지도 이용</li>
+        </ul>
+      </div>
+      <div style="position:relative">
+        <div class="phone"><img src="./img/map.jpg" alt="화장실나우 지도 화면: 서울시청 주변 화장실이 지도와 목록으로 표시됨" /></div>
+        <div class="float-card" aria-hidden="true">
+          <div class="ico">🚻</div>
+          <div><b>시청역 1호선 화장실</b><span class="dot">● 운영 중</span> · 150m</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="alt">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">왜 화장실나우인가요?</span>
+        <h2>화장실 찾기, 아직도 감으로 하세요?</h2>
+        <p class="sub">일반 지도 앱으로는 화장실 정보를 제대로 찾기 어렵습니다.</p>
+      </div>
+      <div class="compare">
+        <div class="card before reveal">
+          <span class="tag">지금까지는</span>
+          <h3>찾아가 봐야 알았어요</h3>
+          <ul>
+            <li>"화장실"을 검색하면 상가와 식당만 잔뜩 나와요</li>
+            <li>도착해서야 문이 잠겨 있다는 걸 알게 돼요</li>
+            <li>장애인 칸이나 기저귀 교환대가 있는지 알 수 없어요</li>
+          </ul>
+        </div>
+        <div class="card after reveal">
+          <span class="tag">화장실나우에서는</span>
+          <h3>출발 전에 다 알 수 있어요</h3>
+          <ul>
+            <li>공공데이터 기반 공중화장실만 지도에 표시돼요</li>
+            <li>운영시간을 보고 지금 열려 있는지 알려줘요</li>
+            <li>편의시설로 걸러서 나에게 맞는 곳만 찾을 수 있어요</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">주요 기능</span>
+        <h2>찾고, 확인하고, 바로 출발</h2>
+        <p class="sub">필요한 정보만 담아 급할 때도 헤매지 않도록 만들었어요.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-text">
+          <span class="num">1</span>
+          <h3>내 주변 화장실을<br />지도에서 한눈에</h3>
+          <p>앱을 열면 현재 위치를 중심으로 가까운 공중화장실이 지도와 목록에 표시돼요. 거리순으로 정렬되고, 운영 중인지도 색으로 바로 보여요.</p>
+          <div class="chips"><span>현재 위치 기준</span><span>거리순 정렬</span><span>운영 여부 표시</span></div>
+        </div>
+        <div class="phone"><img src="./img/map.jpg" alt="지도 화면" loading="lazy" /></div>
+      </div>
+
+      <div class="feature reverse reveal">
+        <div class="feature-text">
+          <span class="num">2</span>
+          <h3>필요한 조건으로<br />골라서 찾기</h3>
+          <p>장소나 지하철역 이름으로 검색하고, 필요한 편의시설로 걸러 보세요. 휠체어 이용자, 아이와 함께인 보호자 모두 맞는 곳을 빠르게 찾을 수 있어요.</p>
+          <div class="chips"><span>24시간</span><span>장애인 시설</span><span>기저귀 교환대</span><span>남녀 분리</span><span>CCTV</span><span>손 건조기</span></div>
+        </div>
+        <div class="phone"><img src="./img/search.jpg" alt="검색 화면: 장애인 시설 필터 적용" loading="lazy" /></div>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-text">
+          <span class="num">3</span>
+          <h3>로드뷰로 입구 확인,<br />길안내까지 한 번에</h3>
+          <p>상세 화면에서 로드뷰로 주변 모습을 미리 보고, 운영시간·관리기관·편의시설을 확인한 뒤 길안내로 바로 출발하세요. 정보가 다르면 불편 신고로 알려 주세요.</p>
+          <div class="chips"><span>카카오 로드뷰</span><span>길안내</span><span>즐겨찾기</span><span>후기</span><span>불편 신고</span></div>
+        </div>
+        <div class="phone"><img src="./img/detail.jpg" alt="화장실 상세 화면: 로드뷰, 운영시간, 편의시설" loading="lazy" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">숫자로 보는 화장실나우</span>
+        <h2>전국 어디서든 쓸 수 있어요</h2>
+      </div>
+      <div class="stats">
+        <div class="stat reveal"><b>50,000+</b><span>공중화장실</span><small>공공데이터 기반 전국 데이터</small></div>
+        <div class="stat reveal"><b>6가지</b><span>편의시설 필터</span><small>24시간 · 장애인 시설 · 기저귀 교환대 등</small></div>
+        <div class="stat reveal"><b>0원</b><span>이용 요금</span><small>광고 없이 무료</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">사용 방법</span>
+        <h2>4단계면 충분해요</h2>
+      </div>
+      <ol class="steps">
+        <li class="reveal"><h3>앱 설치</h3><p>아래 버튼으로 APK를 받아 설치해요.</p></li>
+        <li class="reveal"><h3>위치 권한 허용</h3><p>내 주변 화장실을 찾기 위해 위치를 사용해요.</p></li>
+        <li class="reveal"><h3>가까운 곳 확인</h3><p>지도와 목록에서 거리, 운영 여부를 확인해요.</p></li>
+        <li class="reveal"><h3>길안내로 출발</h3><p>상세 화면에서 길안내를 누르면 끝이에요.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="install" class="alt">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">앱 받기</span>
+        <h2>지금 무료로 설치하세요</h2>
+        <p class="sub">현재 Android 버전을 제공하고 있어요.</p>
+      </div>
+      <div class="install">
+        <div class="card reveal">
+          <h3>설치 방법</h3>
+          <ol>
+            <li>휴대폰에서 <b>APK 다운로드</b> 버튼을 눌러 파일을 받아요.</li>
+            <li>다운로드한 <b>toiletnow.apk</b> 파일을 열어요.</li>
+            <li>"출처를 알 수 없는 앱" 안내가 나오면 <b>이 출처 허용</b>을 켜요.</li>
+            <li><b>설치</b>를 누르면 끝이에요.</li>
+          </ol>
+          <div class="cta-row" style="margin-top:24px">
+            <a class="btn btn-primary btn-lg js-download" href="#">APK 다운로드</a>
+          </div>
+          <p class="note">Play 프로텍트가 "확인되지 않은 앱"이라고 안내할 수 있어요. 스토어 밖에서 받은 앱에 표시되는 안내이니 <b>무시하고 설치</b>를 눌러 주세요.</p>
+        </div>
+        <div class="card qr reveal">
+          <h3>PC에서 보고 계신가요?</h3>
+          <img src="./img/qr.svg" alt="APK 다운로드 QR 코드" />
+          <p>휴대폰 카메라로 QR 코드를 찍으면<br />바로 다운로드할 수 있어요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2>자주 묻는 질문</h2>
+      </div>
+      <div class="faq">
+        <details class="reveal"><summary>정말 무료인가요?</summary>
+          <p>네. 화장실나우의 모든 기능은 무료이고 광고도 없어요.</p></details>
+        <details class="reveal"><summary>회원가입을 꼭 해야 하나요?</summary>
+          <p>아니요. 지도와 검색, 상세 정보는 로그인 없이 쓸 수 있어요. 즐겨찾기, 방문 기록, 후기 작성처럼 내 정보를 저장하는 기능만 로그인이 필요해요. 이메일, 카카오, 구글 계정으로 가입할 수 있어요.</p></details>
+        <details class="reveal"><summary>아이폰에서도 쓸 수 있나요?</summary>
+          <p>지금은 Android만 지원해요.</p></details>
+        <details class="reveal"><summary>화장실 정보는 어디서 가져오나요?</summary>
+          <p>행정안전부와 각 지자체가 공개한 공공데이터 "공중화장실 정보"를 바탕으로 해요. 위치, 운영시간, 관리기관, 편의시설 정보를 함께 보여 드려요.</p></details>
+        <details class="reveal"><summary>정보가 실제와 달라요.</summary>
+          <p>화장실 상세 화면 아래의 <b>불편 신고</b>로 알려 주세요. 폐쇄, 운영시간 오류, 청결 불량, 시설 고장 등을 신고할 수 있고, 최근 신고 내용은 다른 이용자에게도 보여요.</p></details>
+        <details class="reveal"><summary>"앱이 설치되지 않았습니다"라고 나와요.</summary>
+          <p>이전에 설치한 화장실나우가 있다면 먼저 삭제한 뒤 다시 설치해 주세요. Android 7.0 이상에서 설치할 수 있어요.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="final reveal">
+        <h2>다음에 급할 땐<br />화장실나우를 열어 보세요</h2>
+        <p class="sub">설치는 1분이면 충분해요.</p>
+        <a class="btn btn-primary btn-lg js-download" href="#install">Android 앱 다운로드</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--text)">화장실나우</b> · CleanPass</p>
+      <p>문의 2024000002@g.baewha.ac.kr</p>
+      <p>화장실 데이터 출처: 공공데이터포털 공중화장실 정보</p>
+      <p>© 2026 CleanPass</p>
+    </div>
+    <nav>
+      <a href="./terms.html">이용약관</a>
+      <a href="./privacy.html"><b>개인정보처리방침</b></a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // APK 주소는 여기 한 곳에서만 바꾸면 된다
+  var APK_URL = 'https://github.com/CleanPass-Toliet/toiletnow-policy/releases/latest/download/toiletnow.apk';
+  // 휴대폰에서는 바로 다운로드, PC에서는 QR 코드가 있는 설치 안내로 이동
+  var isMobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  document.querySelectorAll('.js-download').forEach(function (a) {
+    if (isMobile || a.closest('#install')) {
+      a.href = APK_URL;
+      a.setAttribute('download', 'toiletnow.apk');
+    }
+  });
+
+  var io = 'IntersectionObserver' in window && new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io ? io.observe(el) : el.classList.add('on'); });
+</script>
 </body>
 </html>
