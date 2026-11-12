@@ -321,7 +321,7 @@
           <h3>설치 방법</h3>
           <ol>
             <li>휴대폰에서 <b>APK 다운로드</b> 버튼을 눌러 파일을 받아요.</li>
-            <li>다운로드한 <b>toiletnow.apk</b> 파일을 열어요.</li>
+            <li>다운로드한 <b class="js-apk-name">toiletnow.apk</b> 파일을 열어요.</li>
             <li>"출처를 알 수 없는 앱" 안내가 나오면 <b>이 출처 허용</b>을 켜요.</li>
             <li><b>설치</b>를 누르면 끝이에요.</li>
           </ol>
@@ -390,16 +390,35 @@
 </footer>
 
 <script>
-  // APK 주소는 여기 한 곳에서만 바꾸면 된다
+  // 기본 APK 주소 (최신 릴리스의 toiletnow.apk). 아래에서 버전이 붙은 파일을 찾으면 그 주소로 바꾼다
   var APK_URL = 'https://github.com/CleanPass-Toliet/toiletnow/releases/latest/download/toiletnow.apk';
+  var APK_NAME = 'toiletnow.apk';
   // 휴대폰에서는 바로 다운로드, PC에서는 QR 코드가 있는 설치 안내로 이동
   var isMobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
-  document.querySelectorAll('.js-download').forEach(function (a) {
-    if (isMobile || a.closest('#install')) {
-      a.href = APK_URL;
-      a.setAttribute('download', 'toiletnow.apk');
-    }
-  });
+  function applyApkLink() {
+    document.querySelectorAll('.js-download').forEach(function (a) {
+      if (isMobile || a.closest('#install')) {
+        a.href = APK_URL;
+        a.setAttribute('download', APK_NAME);
+      }
+    });
+    document.querySelectorAll('.js-apk-name').forEach(function (el) { el.textContent = APK_NAME; });
+  }
+  applyApkLink();
+
+  // 최신 릴리스에서 버전이 붙은 APK(예: toiletnow-v1.0-4.apk)를 찾아 받게 한다. 실패하면 기본 주소 그대로
+  if (window.fetch) {
+    fetch('https://api.github.com/repos/CleanPass-Toliet/toiletnow/releases/latest')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rel) {
+        var asset = rel && (rel.assets || []).filter(function (x) { return /^toiletnow-.+\.apk$/.test(x.name); })[0];
+        if (!asset) return;
+        APK_URL = asset.browser_download_url;
+        APK_NAME = asset.name;
+        applyApkLink();
+      })
+      .catch(function () {});
+  }
 
   var io = 'IntersectionObserver' in window && new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
